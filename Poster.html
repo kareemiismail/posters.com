@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posters</title>
+    <a href="Poster.css"></a>
+    <a href="Poster.js"></a>
+</head>
+<body>
+    <img src="Posters.png" style="height: 200px; width: 500px">
+ <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .post-container {
+      margin-top: 20px;
+    }
+    .post {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .post img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Post!</h1>
+
+  <form id="postForm">
+    <label for="postText">What's on your mind?</label><br>
+    <textarea id="postText" rows="4" cols="50" placeholder="Write something..."></textarea><br><br>
+
+    <label for="postImage">Upload an image (optional):</label><br>
+    <input type="file" id="postImage" accept="image/*"><br><br>
+
+    <button type="submit">Post</button>
+  </form>
+<h1>Posts</h1>
+  <div class="post-container" id="postsContainer"></div>
+
+  <script>
+    // Function to create and display a post
+    function createPost(postText, postImage) {
+      const postContainer = document.getElementById('postsContainer');
+
+      const postDiv = document.createElement('div');
+      postDiv.classList.add('post');
+
+      const postTextElement = document.createElement('p');
+      postTextElement.textContent = postText;
+      postDiv.appendChild(postTextElement);
+
+      if (postImage) {
+        const imgElement = document.createElement('img');
+        imgElement.src = postImage;
+        postDiv.appendChild(imgElement);
+      }
+
+      postContainer.appendChild(postDiv);
+    }
+
+    // Save the post to localStorage
+    function savePost(postText, postImage) {
+      let posts = JSON.parse(localStorage.getItem('posts')) || [];
+      posts.push({ postText, postImage });
+      localStorage.setItem('posts', JSON.stringify(posts));
+    }
+
+    // Display saved posts
+    function loadPosts() {
+      const posts = JSON.parse(localStorage.getItem('posts')) || [];
+      posts.forEach(post => createPost(post.postText, post.postImage));
+    }
+
+    // Handle form submission
+    document.getElementById('postForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const postText = document.getElementById('postText').value;
+      const postImageInput = document.getElementById('postImage');
+      const postImage = postImageInput.files[0] ? URL.createObjectURL(postImageInput.files[0]) : null;
+
+      // Save the post to localStorage
+      savePost(postText, postImage);
+
+      // Create the post display on the page
+      createPost(postText, postImage);
+
+      // Clear the form
+      document.getElementById('postText').value = '';
+      postImageInput.value = '';
+    });
+    
+ // Load saved posts on page load
+ window.onload = loadPosts;
+</script>
+</body>
+</html>
